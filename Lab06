@@ -1,0 +1,161 @@
+4 Display the last names of all employees who are in the same department as the employee named davies. 
+You need to consider that the name can be input in any mix of case (example AbEl, abel, abEL)
+-SQL
+SELECT  last_name
+FROM    employees
+WHERE    department_id = (SELECT department_id
+                          FROM employees
+                          WHERE UPPER(last_name) = UPPER('Davies'));
+
+-OUTPUT
+LAST_NAME
+-------------------
+Mourgos
+Rajs
+Davies
+Matos
+Vargas
+
+
+
+
+5 Display the first name of the lowest paid employee(s)
+
+-SQL
+SELECT first_name
+FROM employees
+WHERE salary =
+                (SELECT MIN(salary)
+                 FROM employees);
+
+-OUTPUT
+FIRST_NAME
+--------------------
+Randall
+Peter
+
+
+6 Display the city that the highest paid employee(s) are located in.
+
+-SQL
+SELECT    last_name
+FROM      employees JOIN departments USING (department_id)
+                    JOIN locations   USING (location_id)
+WHERE (city, salary)   IN (SELECT city, MAX(salary)
+                           FROM employees JOIN departments USING (department_id)
+                                          JOIN locations   USING (location_id)
+                            GROUP BY city);
+
+OUTPUT
+LAST_NAME
+--------------------
+King
+Mourgos
+Hartstein
+Hunold
+Abel
+
+
+
+
+7 Display the last name, salary, department_id of the lowest paid employee(s) 
+in each department as long as the department_id is above 75
+
+-SQL
+
+SELECT last_name, salary, department_id
+ FROM employees
+ WHERE salary IN (SELECT  MIN(salary)
+                 FROM    employees
+                 WHERE   department_id > 75);
+
+
+OUTPUT
+LAST_NAME    SALARY    DEPARTMENT_ID
+-----------------------------------------
+Gietz    8300    110
+
+
+
+8 Display the last name of the lowest paid employee(s) in each city
+
+-SQL
+
+SELECT last_name
+FROM   employees JOIN departments USING (department_id)
+                 JOIN locations   USING (location_id)
+WHERE (city, salary) IN (SELECT city, MIN(salary)
+                         FROM   employees JOIN departments USING (department_id)
+                                         JOIN locations   USING (location_id)
+                         GROUP BY city);
+         
+-OUTPUT
+
+LAST_NAME
+-----------
+Whalen
+Matos
+Vargas
+Fay
+Lorentz
+Taylor
+
+
+ 9 Display last name and salary for all employees who earn less than the lowest salary in ANY department.
+Sort the output by top salaries first and then by last name.
+ 
+ 
+ ﻿-SQL
+SELECT last_name, salary
+FROM    employees
+WHERE   (department_id, salary) IN (SELECT department_id, MIN(salary)
+                                FROM employees
+                                GROUP BY (department_id))
+ORDER BY salary desc, last_name;
+
+-OUTPUT
+
+LAST_NAME    SALARY
+-----------------------------------
+De Haan           17000
+Kochhar           17000
+Taylor            8600
+Gietz             8300
+Fay               6000
+Lorentz           4200
+Whalen            3500
+Matos             2500
+Vargas            2500
+
+
+
+
+10 Display last name, job title and salary for all employees whose salary matches any of the salaries from the IT Department.
+Do NOT use Join method.
+Sort the output by salary ascending first and then by last_name
+
+
+-SQL
+
+SELECT last_name, job_id, salary
+FROM    employees
+WHERE   salary = ANY(SELECT salary
+                 FROM employees
+                 WHERE department_id = 60)
+ORDER BY salary, last_name;
+
+
+-OUTPUT
+
+LAST_NAME            JOB_ID           SALARY
+------------------------------------------------------
+Lorentz               IT_PROG         4200
+Ernst                 IT_PROG         6000
+Fay                   MK_REP          6000
+Hunold                IT_PROG         9000
+
+
+
+
+Display the department_id  and lowest salary for any department_id that is a department_id greater than that of Abel
+
