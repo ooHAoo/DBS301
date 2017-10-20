@@ -1,0 +1,282 @@
+1.
+SQL:
+SELECT  cust_no, cname, country_cd
+FROM    customers
+WHERE   UPPER(country_cd) = UPPER('gEr');
+
+
+OUTPUT:
+CUST_NO	  CNAME				           COUNTRY_CD
+------------------------------------------------
+1119		GO Outlet Frankfurt		    	GER 
+1006		Bergsteiger G.m.b.H.    		GER 
+1037		Ultra Sports 3				      GER 
+1051		Sportwaren G.m.b.H. 1	    	GER 
+1052		Sportwaren G.m.b.H. 2	    	GER 
+1053		Sportwaren G.m.b.H. 3		    GER 
+1054		Supras Camping Supplies 8 	GER
+
+
+2.
+SQL: 
+SELECT  cust_no
+FROM    customers
+WHERE   UPPER(cname) = 'ULTRA SPORTS 5';
+
+OUTPUT:
+CUST_NO
+--------
+1002
+
+
+3.
+SQL:
+SELECT      c.cust_no AS "Customer #", 
+            c.cname AS "Customer Name", 
+            o.order_no AS "Order #"   
+FROM        customers c
+JOIN        orders o
+ON          c.cust_no = o.cust_no
+JOIN        orderlines ol
+ON          o.order_no = ol.order_no
+WHERE       ol.prod_no = 40303
+ORDER BY    "Customer #" ASC;
+
+OUTPUT:
+Customer #	Customer Name				    Order #
+------------------------------------------------------
+1004			Mountain Madness 5			    115
+1007			Backwoods Equipment(Rom)		111
+1009			GO Outlet Kista AB			    137
+1015			Desert Duds and Tees 8	  	73
+1019			Supremax Montagna 5		  	  78
+1037			Ultra Sports 3		      		25
+1037			Ultra Sports 3			      	271
+1037			Ultra Sports 3			      	211
+1041			Vacation Central 3		    	129
+1055			OutBack Pty 1			        	30
+1059			Botanechi K.K. 1	      		175
+1062			123 Fitness PTE Ltd		     	53
+1087			Rock Steady 1				        206
+1093			Clear Valley Waters 3		    19
+1097			Supremax Montagna 3			    214
+1097			Supremax Montagna 3		    	274
+1102			Pro Form Supplies 4		     	57
+1106			Up and Up Co. 4		        	168
+1106			Up and Up Co. 4		        	204
+1108			New Wave Wilderness 2	     	50
+1121			GO Outlet Manchester		    15
+1136			Hill Street Sports 2		    70
+1145			Florida Sun Sports 3	    	71
+1147			Juan's Sports 1			        183
+
+
+4.
+SQL:
+SELECT  COUNT(DISTINCT order_no) AS "Number of Order"
+FROM    orderlines
+WHERE   prod_no = 40302;
+
+OUTPUT:
+Number of Order
+-----------------
+22
+
+
+5.
+5 Display all orders for United Kingdom. 
+The word entered is United Kingdom and not UK. 
+Show only cities that start with L.
+Display the customer number, customer name, order number, product name, the total dollars for that line. 
+Give that last column the name of TOTAL. 
+Put the output into customer number order from highest to lowest 
+and display only order numbers less than 75
+SQL:
+SELECT      o.cust_no, c.cname, ol.order_no, p.prod_name, 
+  (ol.price * ol.qty) AS "Total"
+FROM        countries ct
+JOIN        customers c
+ON          ct.country_id = c.country_cd
+JOIN        orders o
+ON          c.cust_no = o.cust_no
+JOIN        orderlines ol
+ON          o.order_no = ol.order_no
+JOIN        products p
+ON          ol.prod_no = p.prod_no
+WHERE       c.city LIKE 'L%'
+AND         ol.order_no < 75
+AND         UPPER(ct.country_name) = UPPER('United Kingdom')
+ORDER BY    o.cust_no DESC;
+
+OUTPUT:
+CUST_NO	  CNAME			      ORDER_NO	  PROD_NAME				      Total
+-----------------------------------------------------------------------
+1120		GO Outlet London	61		    Star Lite				          5610
+1120		GO Outlet London	49		    Pocket Water Filter		    3780
+1120		GO Outlet London	29		    MoonGlow			          	2064
+1120		GO Outlet London	49		    Day Tripper		           	14
+1120		GO Outlet London	49	    	Pack n' Hike		        	262
+1120		GO Outlet London	49		    GO Cookset		          	1512
+1120		GO Outlet London	29		    GO Cookset	          		1512
+1120		GO Outlet London	61		    GO Camp Kettle	      		1533
+1120		GO Outlet London	49		    GO Headband		          	320
+1120		GO Outlet London	61		    GO Wristband	        		384
+1120		GO Outlet London	29	    	GO Wristband	        		640
+1120		GO Outlet London	29	    	Pocket U.V. Alerter   		558
+1120		GO Outlet London	49	    	RiverKind Shampoo		      558
+1120		GO Outlet London	29	    	RiverKind Detergent		    1806
+1120		GO Outlet London	61		    Pro-Lite Water Filter	    165
+1120		GO Outlet London	61		    Pocket Water Filter		    8370
+1120		GO Outlet London	61		    MoonGlow			          	1677
+
+
+6.
+SELECT COUNT(DISTINCT(country_cd)) AS “Number of Countries”
+FROM   CUSTOMERS
+
+OUTPUT:
+Number of Countries
+--------------------
+14
+
+
+7.
+SQL:
+SELECT      c.cname, o.order_no, SUM(ol.price * ol.qty) AS "Total Dollar"
+FROM        customers c, orders o, orderlines ol
+WHERE       (c.cust_no = o.cust_no AND o.order_no = ol.order_no)
+AND         UPPER(city) = UPPER('London')
+GROUP BY    o.order_no, c.cname
+ORDER BY    order_no;
+
+
+OUTPUT:
+CNAME			ORDER_NO	Total Dollar
+-------------------------------------------
+GO Outlet London	29		6580
+GO Outlet London	49		6446
+GO Outlet London	61		17739
+GO Outlet London	107		28466
+Trees to Seas Ltd	122		5056
+Trees to Seas Ltd	170		5728
+
+
+8.
+SQL:
+SELECT      employee_id,(last_name||', '||first_name) AS "Full Name", 
+            job_id,
+            TO_CHAR((LAST_DAY(hire_date)), 'FMMonth ddth "of "yyyy')
+AS "Start Date"
+FROM        employees
+WHERE       TO_CHAR(HIRE_DATE, 'YYYY') 
+NOT IN(1992, 1993, 1994, 1995, 1996, 1997)
+AND         TO_CHAR(HIRE_DATE, 'MM') IN (05, 06, 07, 08, 12) 
+ORDER BY    HIRE_DATE DESC;
+
+
+OUTPUT:
+EMPLOYEE_ID	Full Name			JOB_ID	Start Date
+----------------------------------------------------------
+178			Grant, Kimberely	SA_REP	May 31st of 1999
+144			Vargas, Peter		ST_CLERK	July 31st of 1998
+104			Ernst, Bruce		IT_PROG	May 31st of 1991
+100			King, Steven		AD_PRES	June 30th of 1987
+
+
+9.
+SQL:
+SELECT      'Employee ' || employee_id || ' named ' 
+  || first_name || ' ' || last_name 
+  ||' with Job ID of ' || JOB_ID 
+  || ' will have a new salary of $' ||
+CASE WHEN   job_id LIKE '%VP' THEN (salary * 1.2)
+     WHEN   JOB_ID LIKE '%MAN' THEN(salary * 1.3)
+     WHEN    job_id LIKE '%MGR' THEN (salary * 1.3)
+END
+            AS "Employees with Increased Pay"
+FROM        employees
+WHERE       salary NOT BETWEEN 6000 AND 11000
+AND         REGEXP_LIKE(job_id, '\_(VP|MGR|MAN)$');
+
+
+OUTPUT:
+Employees with Increased Pay
+-----------------------------
+Employee 101 named Neena Kochhar with Job ID of AD_VP will have a new salary of $20400
+Employee 102 named Lex De Haan with Job ID of AD_VP will have a new salary of $20400
+Employee 201 named Michael Hartstein with Job ID of MK_MAN will have a new salary of $16900
+Employee 124 named Kevin Mourgos with Job ID of ST_MAN will have a new salary of $7540
+
+
+10.
+SQL:
+SELECT  last_name, job_id, salary
+FROM    employees
+WHERE   salary > ALL (
+                    SELECT MIN(salary)
+                    FROM employees emp
+                    JOIN departments d USING(department_id)
+                    JOIN locations loc USING(location_id)
+                    WHERE UPPER(loc.country_id) != 'US'
+                    GROUP BY department_id
+                   )
+AND (job_id NOT LIKE '%_VP%' AND job_id NOT LIKE '%_PRES%')
+ORDER BY job_id ASC;
+
+OUTPUT:
+LAST_NAME		JOB_ID	SALARY
+--------------------------------
+Higgins		AC_MGR	12000
+Hunold		IT_PROG	9000
+Hartstein		MK_MAN	13000
+Zlotkey		SA_MAN	10500
+Abel			SA_REP	11000
+
+
+11.
+SQL:
+SELECT LAST_NAME, SALARY, JOB_ID
+FROM EMPLOYEES
+WHERE DEPARTMENT_ID = ANY 
+      (SELECT DEPARTMENT_ID
+       FROM DEPARTMENTS
+       WHERE UPPER(DEPARTMENT_NAME) IN ('IT', 'ACCOUNTING', 'MARKETING'))
+AND SALARY > (SELECT MIN(SALARY)
+              FROM EMPLOYEES
+              WHERE DEPARTMENT_ID = (SELECT DEPARTMENT_ID
+                                    FROM DEPARTMENTS
+                                    WHERE UPPER(DEPARTMENT_NAME) = ('SHIPPING')))
+ORDER BY LAST_NAME;
+
+
+OUTPUT:
+LAST_NAME		SALARY	JOB_ID
+------------------------------------
+Ernst		6000		IT_PROG
+Fay			6000		MK_REP
+Gietz		8300		AC_ACCOUNT
+Hartstein		13000	MK_MAN
+Higgins		12000	AC_MGR
+Hunold		9000		IT_PROG
+Lorentz		4200		IT_PROG
+
+
+
+12.
+SQL:
+SELECT   department_id, job_id, MIN(salary) AS “Minimum Salary”
+FROM     employees INNER JOIN departments USING (department_id)
+WHERE    salary BETWEEN 6000 AND 18000
+AND      job_id NOT LIKE '%REP'
+AND      UPPER(department_name) NOT IN ('IT', 'SALES')
+GROUP BY department_id, job_id
+ORDER BY department_id, job_id;
+
+
+OUTPUT:
+DEPARTMENT_ID	JOB_ID		Minimum Salary
+---------------------------------------------
+20			MK_MAN		13000
+90			AD_VP		17000
+110			AC_ACCOUNT	8300
+110			AC_MGR		12000
