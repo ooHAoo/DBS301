@@ -8,7 +8,7 @@ WHERE   UPPER(country_cd) = UPPER('gEr');
 OUTPUT:
 CUST_NO	  CNAME		COUNTRY_CD
 ------------------------------------------------
-1119	 GO Outlet Frankfurt	GER 
+1119	 GO Outlet Frankfurt	 GER 
 1006	Bergsteiger G.m.b.H.    GER 
 1037	Ultra Sports 3          GER 
 1051	Sportwaren G.m.b.H. 1	GER 
